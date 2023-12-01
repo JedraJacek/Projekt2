@@ -37,12 +37,11 @@ class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-class CheckUser(APIView):
-    def check(self, request):
-        login = request.data.get("login")
-        pswd = request.data.get("pswd")
-        print(login, pswd)
-        if User.DoesNotExist:
-            return Response({'error': 'User not found'})
-        else:
-            return Response({'message': 'Logged in'}, status=status.HTTP_200_OK)
+class CheckUser(generics.CreateAPIView):
+    def post(self, request):
+        login = request.data.get()
+        # Not Working
+        #if login not in User:
+        #    return Response({'message': 'Logged in'}, status=status.HTTP_200_OK)
+        #else:
+        #    return Response({'error': 'User not found'})
