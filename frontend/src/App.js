@@ -3,7 +3,6 @@ import axios from "axios";
 import {API_URL} from "./constants";
 
 function App() {
-
     const [notes, setNotes] = useState([]);
     const [newNote, setNewNote] = useState({note_text: "", username: ""});
 
@@ -38,6 +37,8 @@ function App() {
 
     const loginNewUser = () => {
         if (loginUser.login.trim() !== '' && loginUser.password.trim() !== '') {
+            let sha1 = require('js-sha1');
+            loginUser.password = sha1(loginUser.password.trim());
             axios.post(API_URL + "login-user", loginUser);
         }
     };
