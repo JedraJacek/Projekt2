@@ -1,8 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import {API_URL} from "./constants";
+import { ReactSession } from 'react-client-session';
 
 function App() {
+
+    ReactSession.setStoreType("localStorage");
 
     const [notes, setNotes] = useState([]);
     const [newNote, setNewNote] = useState({note_text: "", username: ""});
@@ -11,8 +14,7 @@ function App() {
     const [newUser, setNewUser] = useState({pk: "", username: "", password: ""});
     const [selectedUser, setSelectedUser] = useState({pk: "", username: "", password: ""});
     const [loginUser, setLoginUser] = useState({pk: "", login: "", password: ""});
-
-    var session;
+    const [session, setSession] = useState({session: ""});
 
     const onLoginChange = e => {
         const {name, value} = e.target;
@@ -41,10 +43,11 @@ function App() {
     const loginNewUser = () => {
         if (loginUser.login.trim() !== '' && loginUser.password.trim() !== '') {
             axios.post(API_URL + "check-user", loginUser).then(function(response){
-                alert(response.data['Session']);
-            }).catch(function(error){
-                alert("Error");
-            })
+                ReactSession.set("Session", response.data['Session']);
+                    alert(ReactSession.get('Session'));
+                }).catch(function(error){
+                    alert("Error");
+                })
         }
     };
     
@@ -56,7 +59,7 @@ function App() {
     }
 
     const addNote = () => {
-        if (newNote.note_text.trim() !== '' && newNote.username.trim() !== '') {
+        if (newNote.note_text.trim() !== '' && newNote.username.trim() !== '' && newNote.username.trim() == session.data['Session']) {
             console.log("text: " + newNote.note_text + ", username: " + newNote.username + ", owner: " + selectedUser.pk);
             axios.post(API_URL + "create-note", {"note_text": newNote.note_text, "owner": selectedUser.pk});
             setNotes([...notes, newNote]);
