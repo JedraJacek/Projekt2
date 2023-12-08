@@ -9,7 +9,7 @@ function App() {
     const [users, setUsers] = useState([]);
     const [newUser, setNewUser] = useState({pk: "", username: "", password: ""});
     const [selectedUser, setSelectedUser] = useState({pk: "", username: "", password: ""});
-    const [loginUser, setLoginUser] = useState({pk: "", login: "", password: ""});
+    const [loginUser, setLoginUser] = useState({login: "", password: ""});
 
     const onLoginChange = e => {
         const {name, value} = e.target;
@@ -37,9 +37,14 @@ function App() {
 
     const loginNewUser = () => {
         if (loginUser.login.trim() !== '' && loginUser.password.trim() !== '') {
-            let sha1 = require('js-sha1');
-            loginUser.password = sha1(loginUser.password.trim());
-            axios.post(API_URL + "login-user", loginUser);
+            //let sha1 = require('js-sha1');
+            //loginUser.password = sha1(loginUser.password.trim());
+            axios.post(API_URL + "login-user", {"username": loginUser.login, "password": loginUser.password})
+            .then(function(response){
+                alert("Sukces");
+            }).catch(function(error) {
+                alert("Error");
+            })
         }
     };
     

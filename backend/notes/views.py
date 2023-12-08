@@ -7,6 +7,17 @@ from rest_framework.views import APIView
 
 from .serializers import NoteSerializer, UserSerializer
 from .models import Note, User
+from .session import Session
+
+class LogInView(APIView):
+    def post(self, request):
+        login = request.data["username"]
+        password = request.data["password"]
+        try:
+            User.objects.get(username=login, password=password)
+            return Response(status=status.HTTP_200_OK)
+        except:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
 class NoteView(generics.ListAPIView):
