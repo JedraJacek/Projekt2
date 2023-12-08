@@ -10,6 +10,15 @@ function App() {
     const [users, setUsers] = useState([]);
     const [newUser, setNewUser] = useState({pk: "", username: "", password: ""});
     const [selectedUser, setSelectedUser] = useState({pk: "", username: "", password: ""});
+    const [loginUser, setLoginUser] = useState({pk: "", login: "", password: ""});
+
+    const onLoginChange = e => {
+        const {name, value} = e.target;
+        setLoginUser((prevLogin) => ({
+            ...prevLogin,
+            [name]: value,
+        }));
+    };
 
     const onUserChange = e => {
         const {name, value} = e.target;
@@ -27,6 +36,12 @@ function App() {
         }));
     }
 
+    const loginNewUser = () => {
+        if (loginUser.login.trim() !== '' && loginUser.password.trim() !== '') {
+            axios.post(API_URL + "check-user", loginUser);
+        }
+    };
+    
     const onUserSelect = e => {
         const name = e;
         const user = users.find(user => user.username === name);
@@ -114,6 +129,28 @@ function App() {
                 </select>
                 <button onClick={addNote}>Add</button>
             </div>
+
+
+            <h3>Login</h3>
+            <div>
+                <input
+                    type="text"
+                    placeholder="login"
+                    name="login"
+                    value={loginUser.login}
+                    onChange={(e) => onLoginChange(e)}
+                />
+                <input
+                    type="password"
+                    placeholder="password"
+                    name="password"
+                    value={loginUser.password}
+                    onChange={(e) => onLoginChange(e)}
+                />
+                <button onClick={loginNewUser}>Login</button>
+            </div>
+
+
             <h3>Notes</h3>
             <ul>
                 {notes.map((note, index) => (
