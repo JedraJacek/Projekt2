@@ -59,7 +59,7 @@ function App() {
     }
 
     const addNote = () => {
-        if (newNote.note_text.trim() !== '' && newNote.username.trim() !== '' && newNote.username.trim() == session.data['Session']) {
+        if (newNote.note_text.trim() !== '' && newNote.username.trim() == ReactSession.get("Session")) {
             console.log("text: " + newNote.note_text + ", username: " + newNote.username + ", owner: " + selectedUser.pk);
             axios.post(API_URL + "create-note", {"note_text": newNote.note_text, "owner": selectedUser.pk});
             setNotes([...notes, newNote]);
@@ -78,7 +78,7 @@ function App() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const usersResponse = await axios.get(API_URL + "users");
+                const usersResponse = await axios.get(API_URL + "users?Session=" + ReactSession.get("Session"));
                 const notesResponse = await axios.get(API_URL + "notes");
 
                 // Assuming both requests were successful
