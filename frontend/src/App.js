@@ -12,6 +12,8 @@ function App() {
     const [selectedUser, setSelectedUser] = useState({pk: "", username: "", password: ""});
     const [loginUser, setLoginUser] = useState({pk: "", login: "", password: ""});
 
+    var session;
+
     const onLoginChange = e => {
         const {name, value} = e.target;
         setLoginUser((prevLogin) => ({
@@ -38,7 +40,11 @@ function App() {
 
     const loginNewUser = () => {
         if (loginUser.login.trim() !== '' && loginUser.password.trim() !== '') {
-            axios.post(API_URL + "check-user", loginUser);
+            axios.post(API_URL + "check-user", loginUser).then(function(response){
+                alert(response.data['Session']);
+            }).catch(function(error){
+                alert("Error");
+            })
         }
     };
     
