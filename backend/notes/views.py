@@ -39,9 +39,10 @@ class CreateUserView(generics.CreateAPIView):
 
 class CheckUser(generics.CreateAPIView):
     def post(self, request):
-        login = request.data.get()
-        # Not Working
-        #if login not in User:
-        #    return Response({'message': 'Logged in'}, status=status.HTTP_200_OK)
-        #else:
-        #    return Response({'error': 'User not found'})
+        try:
+            User.objects.get(username=request.data.get('login'))
+            User.objects.get(password=request.data.get('password'))
+            return Response({'message': 'Logged in'}, status=status.HTTP_200_OK)
+        except:
+            return Response({'error': 'User not found'}, status=status.HTTP_204_NO_CONTENT)
+        
