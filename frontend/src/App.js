@@ -37,8 +37,8 @@ function App() {
 
     const loginNewUser = () => {
         if (loginUser.login.trim() !== '' && loginUser.password.trim() !== '') {
-            //let sha1 = require('js-sha1');
-            //loginUser.password = sha1(loginUser.password.trim());
+            let sha1 = require('js-sha1');
+            loginUser.password = sha1(loginUser.password.trim());
             axios.post(API_URL + "login-user", {"username": loginUser.login, "password": loginUser.password})
             .then(function(response){
                 alert("Sukces");
@@ -66,6 +66,8 @@ function App() {
 
     const addUser = () => {
         if (newUser.username.trim() !== '' && newUser.password.trim() !== '') {
+            let sha1 = require('js-sha1');
+            newUser.password = sha1(newUser.password.trim());
             axios.post(API_URL + "create-user", newUser);
             setUsers([...users, newUser]);
             setNewUser({username: "", password: ""});
