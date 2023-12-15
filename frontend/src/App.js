@@ -1,8 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import {API_URL} from "./constants";
+import { ReactSession } from 'react-client-session';
 
 function App() {
+
+    ReactSession.setStoreType("localStorage");
 
     const [notes, setNotes] = useState([]);
     const [newNote, setNewNote] = useState({note_text: "", username: ""});
@@ -11,6 +14,7 @@ function App() {
     const [newUser, setNewUser] = useState({pk: "", username: "", password: ""});
     const [selectedUser, setSelectedUser] = useState({pk: "", username: "", password: ""});
     const [loginUser, setLoginUser] = useState({pk: "", login: "", password: ""});
+    const [session, setSession] = useState({session: ""});
 
     const onLoginChange = e => {
         const {name, value} = e.target;
@@ -38,7 +42,12 @@ function App() {
 
     const loginNewUser = () => {
         if (loginUser.login.trim() !== '' && loginUser.password.trim() !== '') {
-            axios.post(API_URL + "check-user", loginUser);
+            axios.post(API_URL + "check-user", loginUser).then(function(response){
+                ReactSession.set("Session", response.data['Session']);
+                    alert(ReactSession.get('Session'));
+                }).catch(function(error){
+                    alert("Error");
+                })
         }
     };
     
@@ -50,7 +59,7 @@ function App() {
     }
 
     const addNote = () => {
-        if (newNote.note_text.trim() !== '' && newNote.username.trim() !== '') {
+        if (newNote.note_text.trim() !== '' && newNote.username.trim() == ReactSession.get("Session")) {
             console.log("text: " + newNote.note_text + ", username: " + newNote.username + ", owner: " + selectedUser.pk);
             axios.post(API_URL + "create-note", {"note_text": newNote.note_text, "owner": selectedUser.pk});
             setNotes([...notes, newNote]);
@@ -69,7 +78,7 @@ function App() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const usersResponse = await axios.get(API_URL + "users");
+                const usersResponse = await axios.get(API_URL + "users?Session=" + ReactSession.get("Session"));
                 const notesResponse = await axios.get(API_URL + "notes");
 
                 // Assuming both requests were successful

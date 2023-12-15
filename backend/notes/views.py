@@ -7,15 +7,24 @@ from rest_framework.views import APIView
 
 from .serializers import NoteSerializer, UserSerializer
 from .models import Note, User
+from .session import Session
 
 
-class NoteView(generics.ListAPIView):
-    queryset = Note.objects.all()
-    serializer_class = NoteSerializer
+class NoteView(APIView):
+    def get(self, request):
+        session = request.query_params.get('Session')
 
-class UserView(generics.ListAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+        data = Note.objects.all()
+
+        serializer = NoteSerializer(data, context={'request': request}, many=True)
+        return Response(serializer.data)
+
+
+class UserView(APIView):
+    def get(self, request):
+        data = User.objects.all()
+        serializer = UserSerializer(data, context={'request': request}, many=True)
+        return Response(serializer.data)
 
 class CreateNoteView(APIView):
     def post(self, request):
@@ -40,9 +49,9 @@ class CreateUserView(generics.CreateAPIView):
 class CheckUser(generics.CreateAPIView):
     def post(self, request):
         try:
-            User.objects.get(username=request.data.get('login'))
-            User.objects.get(password=request.data.get('password'))
-            return Response({'message': 'Logged in'}, status=status.HTTP_200_OK)
+            User.objects.get(username=request.data.get('login'), password=request.data.get('password'))
+            Session.add_user(Session, request.data.get('login'))
+            return Response({'Session': request.data.get('login')}, status=status.HTTP_200_OK)
         except:
-            return Response({'error': 'User not found'}, status=status.HTTP_204_NO_CONTENT)
+            return Response({'error': 'User not found'}, status=status.HTTP_401_UNAUTHORIZED)
         
