@@ -51,6 +51,11 @@ function App() {
                 })
         }
     };
+
+    const logout = () => {
+        ReactSession.remove('Session');
+        window.location.reload();
+    }
     
     const onUserSelect = e => {
         const name = e;
@@ -106,93 +111,103 @@ function App() {
         fetchData();
     }, []);
 
-    return (
-        <div>
-            <h1>Notes App</h1>
+    if(ReactSession.get('Session') != null){
+        return (
             <div>
-                <input
-                    type="text"
-                    placeholder="username"
-                    name="username"
-                    value={newUser.username}
-                    onChange={(e) => onUserChange(e)}
-                />
-                <input
-                    type="password"
-                    placeholder="password"
-                    name="password"
-                    value={newUser.password}
-                    onChange={(e) => onUserChange(e)}
-                />
-                <button onClick={addUser}>Add</button>
-            </div>
-            <div>
-                <input
-                    type="text"
-                    placeholder="Add a new note"
-                    name="note_text"
-                    value={newNote.note_text}
-                    onChange={(e) => onNoteChange(e)}
-                />
-                <select value={selectedUser.username} onChange={(e) => onUserSelect(e.target.value)}>
-                    <option value="">Select User</option>
-                    {users.map((user, index) => (
-                        <option key={index} value={user.username}>
-                            {user.username}
-                        </option>
+                <h1>Notes App</h1>
+                <div>
+                    <input
+                        type="text"
+                        placeholder="Add a new note"
+                        name="note_text"
+                        value={newNote.note_text}
+                        onChange={(e) => onNoteChange(e)}
+                    />
+                    <select value={selectedUser.username} onChange={(e) => onUserSelect(e.target.value)}>
+                        <option value="">Select User</option>
+                        {users.map((user, index) => (
+                            <option key={index} value={user.username}>
+                                {user.username}
+                            </option>
+                        ))}
+                    </select>
+                    <button onClick={addNote}>Add</button>
+                </div>
+    
+    
+                <h3>Notes</h3>
+                <ul>
+                    {notes.map((note, index) => (
+                        <li key={index}>
+                            <div>
+                                <span>Username: </span>
+                                {note.username}
+                                <br/>
+                                <span>Note: </span>
+                                {note.note_text}
+                            </div>
+                        </li>
                     ))}
-                </select>
-                <button onClick={addNote}>Add</button>
+                </ul>
+                <h3>Users</h3>
+                <ul>
+                    {users.map((user, index) => (
+                        <li key={index}>
+                            <div>
+                                <span>Username: </span>
+                                {user.username}
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+
+                <button onClick={logout}>Logout</button>
             </div>
-
-
-            <h3>Login</h3>
+        );
+    } else {
+        return (
             <div>
-                <input
-                    type="text"
-                    placeholder="login"
-                    name="login"
-                    value={loginUser.login}
-                    onChange={(e) => onLoginChange(e)}
-                />
-                <input
-                    type="password"
-                    placeholder="password"
-                    name="password"
-                    value={loginUser.password}
-                    onChange={(e) => onLoginChange(e)}
-                />
-                <button onClick={loginNewUser}>Login</button>
+                <h3>Login</h3>
+                <div>
+                    <input
+                        type="text"
+                        placeholder="login"
+                        name="login"
+                        value={loginUser.login}
+                        onChange={(e) => onLoginChange(e)}
+                    />
+                    <input
+                        type="password"
+                        placeholder="password"
+                        name="password"
+                        value={loginUser.password}
+                        onChange={(e) => onLoginChange(e)}
+                    />
+                    <button onClick={loginNewUser}>Login</button><br/>
+                </div>
+                <h3>Create User</h3>
+                <div>
+                    <input
+                        type="text"
+                        placeholder="username"
+                        name="username"
+                        value={newUser.username}
+                        onChange={(e) => onUserChange(e)}
+                    />
+                    <input
+                        type="password"
+                        placeholder="password"
+                        name="password"
+                        value={newUser.password}
+                        onChange={(e) => onUserChange(e)}
+                    />
+                    <button onClick={addUser}>Add</button>
+                </div>
             </div>
+        );
+    }
 
-
-            <h3>Notes</h3>
-            <ul>
-                {notes.map((note, index) => (
-                    <li key={index}>
-                        <div>
-                            <span>Username: </span>
-                            {note.username}
-                            <br/>
-                            <span>Note: </span>
-                            {note.note_text}
-                        </div>
-                    </li>
-                ))}
-            </ul>
-            <h3>Users</h3>
-            <ul>
-                {users.map((user, index) => (
-                    <li key={index}>
-                        <div>
-                            <span>Username: </span>
-                            {user.username}
-                        </div>
-                    </li>
-                ))}
-            </ul>
-        </div>
-    );
+    
 }
 
 export default App;
