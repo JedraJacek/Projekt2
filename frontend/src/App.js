@@ -45,6 +45,7 @@ function App() {
             axios.post(API_URL + "check-user", loginUser).then(function(response){
                 ReactSession.set("Session", response.data['Session']);
                     alert(ReactSession.get('Session'));
+                    window.location.reload();
                 }).catch(function(error){
                     alert("Error");
                 })
@@ -78,17 +79,22 @@ function App() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const usersResponse = await axios.get(API_URL + "users?Session=" + ReactSession.get("Session"));
-                const notesResponse = await axios.get(API_URL + "notes");
+                const usersResponse = await axios.get(API_URL + "users");
+                const notesResponse = await axios.get(API_URL + "notes?Session=" + ReactSession.get("Session"));
 
                 // Assuming both requests were successful
                 const usersData = usersResponse.data;
-                const notesData = notesResponse.data;
+                var notesData = notesResponse.data;
+                
+                if(!Array.isArray(notesData)){
+                    notesData = [notesData]
+                }
 
                 const notesWithUsernames = notesData.map((note) => {
                     const user = usersData.find((user) => user.pk === note.owner);
                     return {...note, username: user.username};
                 });
+
 
                 setUsers(usersData);
                 setNotes(notesWithUsernames);

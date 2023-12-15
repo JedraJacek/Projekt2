@@ -14,9 +14,14 @@ class NoteView(APIView):
     def get(self, request):
         session = request.query_params.get('Session')
 
-        data = Note.objects.all()
+
+        owner = User.objects.get(username=session)
+
+        data = Note.objects.filter(owner=owner.pk)
 
         serializer = NoteSerializer(data, context={'request': request}, many=True)
+
+
         return Response(serializer.data)
 
 
