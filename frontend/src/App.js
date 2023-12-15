@@ -38,7 +38,13 @@ function App() {
 
     const loginNewUser = () => {
         if (loginUser.login.trim() !== '' && loginUser.password.trim() !== '') {
-            axios.post(API_URL + "check-user", loginUser);
+            axios.post(API_URL + "check-user", loginUser)
+            .then(function(response){
+                alert("Sukces!");
+            }).catch(function(error){
+                alert("Error!");
+            })
+
         }
     };
     
